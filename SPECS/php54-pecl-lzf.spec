@@ -14,8 +14,6 @@ Group:		Development/Languages
 License:	PHP
 URL:		http://pecl.php.net/package/%{pecl_name}
 Source0:	http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
-# remove bundled lzf libs
-Patch0:		php-lzf-rm-bundled-libs.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -53,7 +51,8 @@ slight speed cost.
 
 %prep
 %setup -c -q
-%patch0 -p0
+# remove bundled lzf libs
+%{__rm} -rf %{pecl_name}-%{version}/libs
 
 [ -f package2.xml ] || %{__mv} package.xml package2.xml
 %{__mv} package2.xml %{pecl_name}-%{version}/%{pecl_name}.xml
@@ -61,7 +60,7 @@ slight speed cost.
 %build
 cd %{pecl_name}-%{version}
 phpize
-%configure
+%configure --with-liblzf
 %{__make} %{?_smp_mflags}
 
 %install
@@ -117,6 +116,8 @@ fi
 %changelog
 * Tue Apr 21 2015 Carl George <carl.george@rackspace.com> - 1.6.3-1.ius
 - Latest upstream
+- Remove patch0
+- Delete bundled libs in %%prep and use --with-liblzf flag
 
 * Tue Nov 25 2014 Carl George <carl.george@rackspace.com> - 1.6.2-8.ius
 - Correct version conflict (LP bug 1396357)
