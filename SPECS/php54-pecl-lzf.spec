@@ -7,8 +7,8 @@
 %define php_base	php54
 
 Name:		%{php_base}-pecl-lzf
-Version:	1.6.2
-Release:	8.ius%{?dist}
+Version:	1.6.3
+Release:	1.ius%{?dist}
 Summary:	Extension to handle LZF de/compression
 Group:		Development/Languages
 License:	PHP
@@ -115,6 +115,9 @@ fi
 %{pecl_xmldir}/%{name}.xml
 
 %changelog
+* Tue Apr 21 2015 Carl George <carl.george@rackspace.com> - 1.6.3-1.ius
+- Latest upstream
+
 * Tue Nov 25 2014 Carl George <carl.george@rackspace.com> - 1.6.2-8.ius
 - Correct version conflict (LP bug 1396357)
 
