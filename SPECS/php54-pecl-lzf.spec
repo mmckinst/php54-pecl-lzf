@@ -5,18 +5,15 @@
 %define pecl_name	LZF
 %define real_name	php-pecl-lzf
 %define php_base	php54
-%define basever		5.4
 
 Name:		%{php_base}-pecl-lzf
-Version:	1.6.2
-Release:	6.ius%{?dist}
+Version:	1.6.3
+Release:	1.ius%{?dist}
 Summary:	Extension to handle LZF de/compression
 Group:		Development/Languages
 License:	PHP
 URL:		http://pecl.php.net/package/%{pecl_name}
 Source0:	http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
-# remove bundled lzf libs
-Patch0:		php-lzf-rm-bundled-libs.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -33,9 +30,10 @@ Requires:	%{php_base}-api = %{php_apiver}
 Requires(post):	%{__pecl}
 Requires(postun):	%{__pecl}
 Provides:	%{php_base}-pecl(%{pecl_name}) = %{version}
+Provides:       php-pecl(%{pecl_name}) = %{version}-%{release}
 
-Conflicts:	%{real_name} < %{basever}
-Provides:	%{real_name} = %{version}-%{release}
+Conflicts:	%{real_name} < %{version}
+Provides:	%{real_name} = %{version}
 
 # RPM 4.8
 %{?filter_provides_in: %filter_provides_in %{php_extdir}/.*\.so$}
@@ -53,7 +51,8 @@ slight speed cost.
 
 %prep
 %setup -c -q
-%patch0 -p0
+# remove bundled lzf libs
+%{__rm} -rf %{pecl_name}-%{version}/libs
 
 [ -f package2.xml ] || %{__mv} package.xml package2.xml
 %{__mv} package2.xml %{pecl_name}-%{version}/%{pecl_name}.xml
@@ -61,7 +60,7 @@ slight speed cost.
 %build
 cd %{pecl_name}-%{version}
 phpize
-%configure
+%configure --with-liblzf
 %{__make} %{?_smp_mflags}
 
 %install
@@ -115,6 +114,17 @@ fi
 %{pecl_xmldir}/%{name}.xml
 
 %changelog
+* Tue Apr 21 2015 Carl George <carl.george@rackspace.com> - 1.6.3-1.ius
+- Latest upstream
+- Remove patch0
+- Delete bundled libs in %%prep and use --with-liblzf flag
+
+* Tue Nov 25 2014 Carl George <carl.george@rackspace.com> - 1.6.2-8.ius
+- Correct version conflict (LP bug 1396357)
+
+* Thu Nov 07 2013 Ben Harper <ben.harper@rackspace.com> - 1.6.2-7.ius
+- adding provides per LP bug 1249003
+
 * Thu Oct 28 2013 Mark McKinstry <mmckinst@nexcess.net> - 1.6.2-6.ius
 - build IUS RPM from 1.6.2-5 from f20
 - add ius suffix to release
